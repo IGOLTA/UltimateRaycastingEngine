@@ -5,6 +5,10 @@ Shader::Shader(std::filesystem::path path, ShaderType type) {
 	this->type = type;
 }
 
+Shader::~Shader() {
+	if (id != 0) free();
+}
+
 GLuint Shader::getId() const {
 	return id;
 }
@@ -23,7 +27,7 @@ bool Shader::load() {
 		break;
 	}
 
-	*LogStream << "Reading shader " << path  << std::endl;
+	*LogStream << "Reading shader " << path << std::endl;
 
 
 	std::string code;
@@ -40,7 +44,7 @@ bool Shader::load() {
 		return false;
 	}
 
-	*LogStream << "Compiling shader " << path  << std::endl;
+	*LogStream << "Compiling shader " << path << std::endl;
 	char const* source = code.c_str();
 	glShaderSource(id, 1, &source, NULL);
 	glCompileShader(id);

@@ -11,7 +11,7 @@ class Program
 {
 private:
 	static const std::filesystem::path ShadersPath;
-	static std::map<std::string, Program> LoadedShaders;
+	static std::map<std::string, Program*> LoadedShaders;
 
 	std::filesystem::path path;
 	GLuint id = 0;
@@ -19,9 +19,11 @@ private:
 public:
 	static void LoadShaders();
 	static void UnloadShaders();
-	static Program GetShader(std::string name);
+	static const Program* GetShader(std::string name);
+	static unsigned int GetShaderId(std::string name);
 
 	Program();
+	~Program();
 	Program(std::filesystem::path path);
 	bool loadShadersAndLink();
 	void free();

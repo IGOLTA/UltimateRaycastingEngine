@@ -1,10 +1,14 @@
 #include "Program.h"
 
 const std::filesystem::path Program::ShadersPath = std::filesystem::path("shaders");
-std::map<std::string, Program> Program::LoadedShaders = std::map<std::string, Program>();
+std::map<std::string, Program*> Program::LoadedShaders = std::map<std::string, Program*>();
 
 Program::Program() {
 	this->path = "";
+}
+
+Program::~Program() {
+	if (id != 0) free();
 }
 
 Program::Program(std::filesystem::path path) {
@@ -45,9 +49,6 @@ bool Program::loadShadersAndLink() {
 		return false;
 
 	}
-
-	vertex.free();
-	fragment.free();
 }
 
 void Program::free() {
@@ -62,8 +63,8 @@ void Program::LoadShaders() {
 	for (const auto& entry : std::filesystem::directory_iterator(ShadersPath)) {
 		if (!std::filesystem::is_directory(entry.path())) continue;
 
-		Program prog(entry.path());
-		prog.loadShadersAndLink();
+		Program* prog = new Program(entry.path());
+		prog->loadShadersAndLink();
 		LoadedShaders[entry.path().filename().string()] = prog;
 
 	}
@@ -72,13 +73,18 @@ void Program::LoadShaders() {
 
 void Program::UnloadShaders() {
 	for (auto s : LoadedShaders) {
-		s.second.free();
+		delete s.second;
 	}
 
-	LoadedShaders = std::map<std::string, Program>();
+	LoadedShaders = std::map<std::string, Program*>();
 }
 
-Program Program::GetShader(std::string name) {
-	
+const Program* Program::GetShader(std::string name) {
+
 	return LoadedShaders[name];
+}
+
+unsigned int Program::GetShaderId(std::string name) {
+
+	return LoadedShaders[name]->id;
 }

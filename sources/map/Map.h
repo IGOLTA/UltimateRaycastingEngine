@@ -3,10 +3,8 @@
 #include <glm.hpp>
 #include <string>
 
-#include "Tile.h"
-
 struct RayHit {
-	const Tile* tile;
+	unsigned int tileId;
 	float distance;
 	float hitOffset;
 };
@@ -15,13 +13,13 @@ class Map
 {
 private:
 	glm::ivec2 size;
-	Tile* tiles;
+	unsigned int* tiles;
 public:
 	Map(glm::ivec2 size);
 	~Map();
 
-	const Tile* getTileAt(glm::ivec2 pos) const;
-	void setTileAt(glm::ivec2 pos, Tile tile);
+	unsigned int getTileIdAt(glm::ivec2 pos) const;
+	void setTileIdAt(glm::ivec2 pos, unsigned int tile);
 	
 	bool inMap(glm::ivec2 pos) const;
 

@@ -1,3 +1,5 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <iostream>
 
 #include <GL/glew.h>
@@ -8,6 +10,7 @@
 #include "Player.h"
 
 #include "resources/shaders/Program.h"
+#include "resources/Tile.h"
 
 GLFWwindow* window;
 
@@ -37,17 +40,17 @@ Player* player;
 void SetupMap() {
     map = new Map(glm::ivec2(50, 50));
 
-    for (int i = 0; i < 5; i++) {
-        Tile tile;
-        tile.type = Tile::WALL;
-        map->setTileAt(glm::ivec2(18, 5 + i), tile);
+    for (int i = 0; i < 10; i++) {
+        map->setTileIdAt(glm::ivec2(10, 5 + i), 1);
+    }
+
+
+    for (int i = 0; i < 30; i++) {
+        map->setTileIdAt(glm::ivec2(20, 5 + i), 2);
     }
 
     for (int i = 0; i < 30; i++) {
-        Tile tile;
-        tile.type = Tile::WALL;
-        map->setTileAt(glm::ivec2(20, 5 + i), tile);
-        map->setTileAt(glm::ivec2(20, 5 + i), tile);
+        map->setTileIdAt(glm::ivec2(5 + i, 20), 1);
     }
 }
 
@@ -102,18 +105,6 @@ void SetupRenderQuad() {
     glEnableVertexAttribArray(1);
 }
 
-void SetupShaders() {
-    Program::LoadShaders();
-}
-
-void DeletePlayer() {
-    delete player;
-}
-
-void DeleteMap() {
-    delete map;
-}
-
 void DeleteRenderQuad() {
 
 }
@@ -122,24 +113,22 @@ void DeleteRenderTexture() {
 
 }
 
-void UnloadShaders() {
-    Program::UnloadShaders();
-}
-
 void Init() {
+    Tile::LoadTiles();
     SetupMap();
     SetupPlayer();
     SetupRenderTexture();
     SetupRenderQuad();
-    SetupShaders();
+    Program::LoadShaders();
 }
 
 void Stop() {
-    DeletePlayer();
-    DeleteMap();
+    Tile::UnloadTiles();
+    delete player;
+    delete map;
     DeleteRenderQuad();
     DeleteRenderTexture();
-    UnloadShaders();
+    Program::UnloadShaders();
 }
 
 void Compute(double deltaTime, glm::dvec2 cursorPos) {
@@ -162,7 +151,7 @@ void Render(double deltaTime) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     //Raycast
-    GLfloat* raycastDatas = new GLfloat[(RAYS * 2 + 1) * 2];
+    GLfloat* raycastDatas = new GLfloat[(RAYS * 2 + 1) * 3];
 
 
     for (int i = RAYS; i >= -RAYS; i = i - 1) {
@@ -176,24 +165,38 @@ void Render(double deltaTime) {
         //Distamce
         raycastDatas[index] = hit.distance;
 
-
         //Offsets
         raycastDatas[index + offset] = hit.hitOffset;
+
+        //IDs
+        raycastDatas[index + 2 * offset] = hit.tileId;
     }
 
-    glUniform1f(glGetUniformLocation(Program::GetShader("raycast_view"), "HEIGHT_FACTOR"), HEIGHT_FACTOR);
-    glUniform1f(glGetUniformLocation(Program::GetShader("raycast_view"), "TILE_PER_SPRITE"), TILE_PER_SPRITE);
+    glUniform1f(glGetUniformLocation(Program::GetShaderId("raycast_view"), "HEIGHT_FACTOR"), HEIGHT_FACTOR);
+    glUniform1f(glGetUniformLocation(Program::GetShaderId("raycast_view"), "TILE_PER_SPRITE"), TILE_PER_SPRITE);
 
-    glTexImage2D(GL_TEXTURE_1D_ARRAY, 0, GL_R32F, RAYS * 2 + 1, 2, 0, GL_RED, GL_FLOAT, raycastDatas);
+    glTexImage2D(GL_TEXTURE_1D_ARRAY, 0, GL_R32F, RAYS * 2 + 1, 3, 0, GL_RED, GL_FLOAT, raycastDatas);
     glGenerateMipmap(raycastTexture);
-
     delete[] raycastDatas;
 
-    glUseProgram(Program::GetShader("raycast_view"));
-    glBindTexture(GL_TEXTURE_2D, raycastTexture);
-    glBindVertexArray(quadVAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+
+    for (int i = 1; i <= Tile::GetTileNumber(); i++) {
+        glUniform1i(glGetUniformLocation(Program::GetShaderId("raycast_view"), "currentTile"), i);
+
+        glBindTexture(GL_TEXTURE_1D_ARRAY, raycastTexture);
+        glActiveTexture(GL_TEXTURE0);
+        glUniform1i(glGetUniformLocation(Program::GetShaderId("raycast_view"), "raycastData"), 0);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, *Tile::GetTile(i)->getBaseTexture());
+        glUniform1i(glGetUniformLocation(Program::GetShaderId("raycast_view"), "baseColor"), 1);
+    
+        glUseProgram(Program::GetShaderId("raycast_view"));
+
+        glBindVertexArray(quadVAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    }
 }
 
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -280,6 +283,9 @@ int main(void)
 
     glfwSetKeyCallback(window, KeyCallback);
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glClearColor(0, 0, 0.5f, 0);
     float previousFrameTime = glfwGetTime();
     while (!glfwWindowShouldClose(window))
     {

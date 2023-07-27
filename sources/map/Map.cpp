@@ -2,18 +2,24 @@
 
 Map::Map(glm::ivec2 size) {
 	this->size = size;
-	this->tiles = new Tile[size.x * size.y];
+	this->tiles = new unsigned int[size.x * size.y];
+    
+    for (int i = size.y - 1; i >= 0; i--) {
+        for (int j = 0; j < size.x; j++) {
+            setTileIdAt(glm::vec2(j, i), 0);
+        }
+    }
 }
 
 Map::~Map() {
 	delete[] tiles;
 }
 
-const Tile* Map::getTileAt(glm::ivec2 pos) const {
-	return &tiles[pos.x * size.y + pos.y];
+unsigned int Map::getTileIdAt(glm::ivec2 pos) const {
+	return tiles[pos.x * size.y + pos.y];
 }
 
-void Map::setTileAt(glm::ivec2 pos, Tile tile) {
+void Map::setTileIdAt(glm::ivec2 pos, unsigned int tile) {
 	this->tiles[pos.x * size.y + pos.y] = tile;
 }
 
@@ -33,7 +39,7 @@ std::string Map::getMapString() const {
 	mapstring += "\n";
 	for (int i = size.y - 1; i >= 0; i--) {
 		for (int j = 0; j < size.x; j++) {
-			if (getTileAt(glm::vec2(j, i))->type == Tile::VOID) {
+			if (getTileIdAt(glm::vec2(j, i)) == 0) {
 				mapstring += "o";
 			}
 			else {
@@ -107,10 +113,10 @@ RayHit Map::rayCast(glm::vec2 position, glm::vec2 rayDirection) const {
 
         //Check if ray has hit a wall
         if (!this->inMap(mapPos)) {
-            outHit.tile = nullptr;
             hit = 1;
-        } else if (this->getTileAt(mapPos)->type != Tile::VOID) {
-            outHit.tile = this->getTileAt(mapPos);
+            outHit.tileId = 1;
+        } else if (this->getTileIdAt(mapPos) != 0) {
+            outHit.tileId = this->getTileIdAt(mapPos);
             hit = 1;
         }
     }
@@ -120,8 +126,9 @@ RayHit Map::rayCast(glm::vec2 position, glm::vec2 rayDirection) const {
     else outHit.distance = (sideDist.y - deltaDist.y);
 
     //Where exactly the wall was hit
-    if (side == 0)  outHit.hitOffset = (float)position.y + (float) outHit.distance * (float) rayDirection.y;
-    else            outHit.hitOffset = (float) position.x + (float) outHit.distance * (float) rayDirection.x;
+    if (side == 0)  outHit.hitOffset = (float)position.y + (float)outHit.distance * (float)rayDirection.y;
+    else            outHit.hitOffset = (float)position.x + (float)outHit.distance * (float)rayDirection.x;
+
 
     return outHit;
 }

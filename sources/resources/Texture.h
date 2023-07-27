@@ -6,30 +6,25 @@
 #include <vector>
 #include <filesystem>
 
+#include "../stb/stb_image.h"
+
 extern std::ostream* LogStream;
 extern std::ostream* ErrorStream;
 
-class Shader
+class Texture
 {
-public:
-	enum ShaderType
-	{
-		VERTEX,
-		FRAGMENT
-	};
-
 private:
 	std::filesystem::path path;
 	GLuint id = 0;
-	ShaderType type;
 
 public:
-
-	Shader(std::filesystem::path path, ShaderType type);
-	~Shader();
+	Texture();
+	~Texture();
+	Texture(std::filesystem::path path);
 	bool load();
 	void free();
 
-	ShaderType getType() const;
 	GLuint getId() const;
+	operator GLuint() const { return getId(); };
 };
+

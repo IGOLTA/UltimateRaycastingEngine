@@ -136,19 +136,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="sources\resources\shaders\Program.cpp" />
     <ClCompile Include="sources\resources\shaders\Shader.cpp" />
+    <ClCompile Include="sources\resources\shaders\Program.cpp" />
     <ClCompile Include="sources\map\Map.cpp" />
     <ClCompile Include="sources\Player.cpp" />
     <ClCompile Include="sources\main.cpp" />
-    <ClCompile Include="sources\map\Tile.cpp" />
+    <ClCompile Include="sources\resources\Tile.cpp" />
+    <ClCompile Include="sources\resources\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sources\resources\shaders\Program.h" />
     <ClInclude Include="sources\resources\shaders\Shader.h" />
+    <ClInclude Include="sources\resources\shaders\Program.h" />
     <ClInclude Include="sources\map\Map.h" />
     <ClInclude Include="sources\Player.h" />
-    <ClInclude Include="sources\map\Tile.h" />
+    <ClInclude Include="sources\resources\Tile.h" />
+    <ClInclude Include="sources\stb\stb_image.h" />
+    <ClInclude Include="sources\resources\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\raycast_view\frag.glsl" />
