@@ -136,17 +136,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="sources\resources\shaders\Program.cpp" />
+    <ClCompile Include="sources\resources\shaders\Shader.cpp" />
     <ClCompile Include="sources\map\Map.cpp" />
     <ClCompile Include="sources\Player.cpp" />
     <ClCompile Include="sources\main.cpp" />
-    <ClCompile Include="sources\shader_loader.cpp" />
     <ClCompile Include="sources\map\Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="sources\resources\shaders\Program.h" />
+    <ClInclude Include="sources\resources\shaders\Shader.h" />
     <ClInclude Include="sources\map\Map.h" />
     <ClInclude Include="sources\Player.h" />
-    <ClInclude Include="sources\shader_loader.h" />
     <ClInclude Include="sources\map\Tile.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\raycast_view\frag.glsl" />
+    <None Include="shaders\raycast_view\vert.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

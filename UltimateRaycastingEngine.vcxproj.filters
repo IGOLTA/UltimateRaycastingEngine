@@ -18,9 +18,6 @@
     <ClCompile Include="sources\main.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="sources\shader_loader.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="sources\Player.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -30,11 +27,14 @@
     <ClCompile Include="sources\map\Map.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="sources\resources\shaders\Shader.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\resources\shaders\Program.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sources\shader_loader.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="sources\Player.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -44,5 +44,15 @@
     <ClInclude Include="sources\map\Map.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="sources\resources\shaders\Shader.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\resources\shaders\Program.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\raycast_view\vert.glsl" />
+    <None Include="shaders\raycast_view\frag.glsl" />
   </ItemGroup>
 </Project>

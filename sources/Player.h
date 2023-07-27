@@ -4,22 +4,17 @@
 
 #include "map/Map.h"
 
-struct RayHit {
-	const Tile* tile;
-	float distance;
-};
-
 class Player
 {
 private:
-	const float walkSpeed = 3;
-	const float panSpeed = 0.001;
-	const float runSpeed = 4;
-	const float fov = 90;
+	const float walkSpeed = 5;
+	const float panSpeed = 0.002f;
+	const float runSpeed = 10;
+
 
 	glm::vec2 position = glm::vec2(0, 0);
 	glm::vec2 direction = glm::vec2(1, 0);
-	glm::vec2 plane = glm::vec2(0, 1);
+	glm::vec2 plane = glm::vec2(0, 0.8f);
 
 	bool running = 0;
 	
