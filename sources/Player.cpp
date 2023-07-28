@@ -71,3 +71,28 @@ RayHit Player::rayCast(float rayAngle) {
     return map->rayCast(position, rayDirection);
 }
 
+void Player::ceilingScan(int scanLines, float speedFactor, float* scanCoords) const {
+	auto ceilPos = -position / speedFactor;
+	for (int y = 0; y < scanLines; y++)
+	{
+		float fracY = (float)y / (scanLines - 1);
+		// rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
+		glm::vec2 rayDir0 = -direction - plane;
+		glm::vec2 rayDir1 = -direction + plane;
+
+		// Horizontal distance from the camera to the floor for the current row.
+		float rowDistance = 0.5f / fracY;
+
+		// calculate the real world step vector we have to add for each x (parallel to camera plane)
+		// adding step by step avoids multiplications with a weight in the inner loop
+		glm::vec2 floorStep = glm::vec2(rowDistance * (rayDir1.x - rayDir0.x), rowDistance * (rayDir1.y - rayDir0.y));
+
+		// real world coordinates of the leftmost column. This will be updated as we step to the right.
+		glm::vec2 leftmost = glm::vec2(ceilPos.x + rowDistance * rayDir0.x, ceilPos.y + rowDistance * rayDir0.y);
+
+		scanCoords[y] = leftmost.x;
+		scanCoords[y + scanLines] = leftmost.y;
+		scanCoords[y + 2 * scanLines] = floorStep.x;
+		scanCoords[y + 3 * scanLines] = floorStep.y;
+	}	
+}

@@ -154,8 +154,10 @@
     <ClInclude Include="sources\resources\Texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\raycast_view\frag.glsl" />
-    <None Include="shaders\raycast_view\vert.glsl" />
+    <None Include="shaders\floor_and_ceiling\frag.glsl" />
+    <None Include="shaders\floor_and_ceiling\vert.glsl" />
+    <None Include="shaders\raycast_walls\frag.glsl" />
+    <None Include="shaders\raycast_walls\vert.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

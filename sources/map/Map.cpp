@@ -3,12 +3,14 @@
 Map::Map(glm::ivec2 size) {
 	this->size = size;
 	this->tiles = new unsigned int[size.x * size.y];
-    
+
     for (int i = size.y - 1; i >= 0; i--) {
         for (int j = 0; j < size.x; j++) {
             setTileIdAt(glm::vec2(j, i), 0);
         }
     }
+
+    this->ambiantLight = ambiantLight;
 }
 
 Map::~Map() {
@@ -52,12 +54,10 @@ std::string Map::getMapString() const {
 	return mapstring;
 }
 
-RayHit Map::rayCast(glm::vec2 position, glm::vec2 rayDirection) const {
+RayHit Map::rayCast(glm::vec2 position, glm::vec2 rayDirection) const{
     RayHit outHit;
-
     //which box of the map we're in
     auto mapPos = glm::ivec2(int(position.x), int(position.y));
-
 
     //length of ray from current position to next x or y-side
     glm::vec2 sideDist(0, 0);
@@ -126,9 +126,25 @@ RayHit Map::rayCast(glm::vec2 position, glm::vec2 rayDirection) const {
     else outHit.distance = (sideDist.y - deltaDist.y);
 
     //Where exactly the wall was hit
-    if (side == 0)  outHit.hitOffset = (float)position.y + (float)outHit.distance * (float)rayDirection.y;
-    else            outHit.hitOffset = (float)position.x + (float)outHit.distance * (float)rayDirection.x;
-
+    outHit.position = position + outHit.distance * rayDirection;
+    
+    //Wich side was hit
+    if (side == 0) {
+        if (step.x == 1) {
+            outHit.side = HitSide::XN;
+        }
+        else {
+            outHit.side = HitSide::XP;
+        }
+    }
+    else {
+        if (step.y == 1) {
+            outHit.side = HitSide::YN;
+        }
+        else {
+            outHit.side = HitSide::YP;
+        }
+    }
 
     return outHit;
 }
