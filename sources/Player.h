@@ -10,9 +10,9 @@ extern std::ostream* ErrorStream;
 class Player
 {
 private:
-	const float walkSpeed = 5;
+	const float walkSpeed = 7;
 	const float panSpeed = 0.002f;
-	const float runSpeed = 10;
+	const float runSpeed = 14;
 
 
 	glm::vec2 position = glm::vec2(0, 0);

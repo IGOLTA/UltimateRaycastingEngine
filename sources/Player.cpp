@@ -80,14 +80,13 @@ void Player::ceilingScan(int scanLines, float speedFactor, float* scanCoords) co
 		glm::vec2 rayDir0 = -direction - plane;
 		glm::vec2 rayDir1 = -direction + plane;
 
-		// Horizontal distance from the camera to the floor for the current row.
+		// Horizontal distance from the camera to the ceiling for the current row.
 		float rowDistance = 0.5f / fracY;
 
 		// calculate the real world step vector we have to add for each x (parallel to camera plane)
-		// adding step by step avoids multiplications with a weight in the inner loop
 		glm::vec2 floorStep = glm::vec2(rowDistance * (rayDir1.x - rayDir0.x), rowDistance * (rayDir1.y - rayDir0.y));
 
-		// real world coordinates of the leftmost column. This will be updated as we step to the right.
+		// real world coordinates of the leftmost column.
 		glm::vec2 leftmost = glm::vec2(ceilPos.x + rowDistance * rayDir0.x, ceilPos.y + rowDistance * rayDir0.y);
 
 		scanCoords[y] = leftmost.x;

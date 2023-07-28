@@ -1,5 +1,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 
+
 #include <iostream>
 
 #include <GL/glew.h>
@@ -112,7 +113,6 @@ void SetupLightsTexture() {
     glTexParameteri(GL_TEXTURE_1D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
-
 void SetupRenderQuad() {
     GLfloat quadVertices[] = {
         -1.0f,  1.0f, 0.0f,   0.0f, 1.0f,
@@ -205,7 +205,7 @@ void Compute(double deltaTime, glm::dvec2 cursorPos) {
     player->pan(-panDelta);
 }
 
-void Render(double deltaTime) {
+void Render() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     /* Lights */
@@ -363,6 +363,12 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
     }
 }
 
+void SizeCallback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+    Render();
+}
+
 int main(void)
 {
     if (!glfwInit()) {
@@ -398,6 +404,7 @@ int main(void)
     Init();
 
     glfwSetKeyCallback(window, KeyCallback);
+    glfwSetFramebufferSizeCallback(window, SizeCallback);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -412,7 +419,7 @@ int main(void)
         glfwGetCursorPos(window, &cursorPos.x, &cursorPos.y);
 
         Compute(deltaTime, cursorPos);
-        Render(deltaTime);
+        Render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
