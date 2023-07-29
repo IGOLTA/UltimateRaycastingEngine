@@ -13,7 +13,7 @@ private:
 	const float walkSpeed = 7;
 	const float panSpeed = 0.002f;
 	const float runSpeed = 14;
-
+	const float size = 0.5f;
 
 	glm::vec2 position = glm::vec2(0, 0);
 	glm::vec2 direction = glm::vec2(1, 0);

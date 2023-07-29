@@ -114,7 +114,7 @@ RayHit Map::rayCast(glm::vec2 position, glm::vec2 rayDirection) const{
         //Check if ray has hit a wall
         if (!this->inMap(mapPos)) {
             hit = 1;
-            outHit.tileId = 1;
+            outHit.tileId = 0;
         } else if (this->getTileIdAt(mapPos) != 0) {
             outHit.tileId = this->getTileIdAt(mapPos);
             hit = 1;

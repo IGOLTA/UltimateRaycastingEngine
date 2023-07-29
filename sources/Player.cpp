@@ -52,11 +52,29 @@ void Player::move(glm::vec2 moveDirection, float deltaTime) {
 	if (moveDirection.x == 0 && moveDirection.y == 0) return;
 	moveDirection = glm::normalize(moveDirection);
 	moveDirection = complexProduct(moveDirection, direction);
-	if (running) {
-		position = position + moveDirection * runSpeed * deltaTime;
-	} else {
-		position = position + moveDirection * walkSpeed * deltaTime;
-	}
+
+	glm::vec2 mouvment = moveDirection * deltaTime;
+	if (running) mouvment *= runSpeed;
+	else mouvment *= walkSpeed;
+
+	//X motion
+	int xSign = signe(mouvment.x);
+	if (
+		map->getTileIdAt(glm::floor(position + glm::vec2(mouvment.x + size * xSign, 0))) == 0 &&
+		map->getTileIdAt(glm::floor(position + glm::vec2(mouvment.x + size * xSign, size))) == 0 &&
+		map->getTileIdAt(glm::floor(position + glm::vec2(mouvment.x + size * xSign, -size))) == 0
+		)
+		position.x += mouvment.x;
+	
+	//Y motion
+	int ySign = signe(mouvment.y);
+	if (
+		map->getTileIdAt(glm::floor(position + glm::vec2(0, mouvment.y + size * ySign))) == 0 &&
+		map->getTileIdAt(glm::floor(position + glm::vec2(size, mouvment.y + size * ySign))) == 0 &&
+		map->getTileIdAt(glm::floor(position + glm::vec2(-size, mouvment.y + size * ySign))) == 0
+		)
+		position.y += mouvment.y;
+
 }
 
 void Player::pan(float amount) {
