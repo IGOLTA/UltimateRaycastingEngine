@@ -153,6 +153,7 @@
     <ClCompile Include="sources\main.cpp" />
     <ClCompile Include="sources\resources\Tile.cpp" />
     <ClCompile Include="sources\resources\Texture.cpp" />
+    <ClCompile Include="sources\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sources\resources\shaders\Shader.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="sources\resources\Tile.h" />
     <ClInclude Include="sources\stb\stb_image.h" />
     <ClInclude Include="sources\resources\Texture.h" />
+    <ClInclude Include="sources\Utility.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\floor_and_ceiling\frag.glsl" />

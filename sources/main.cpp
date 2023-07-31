@@ -202,7 +202,7 @@ void Compute(double deltaTime, glm::dvec2 cursorPos) {
 
     float panDelta = (float)cursorPos.x - lastMouseX;
     lastMouseX = cursorPos.x;
-    player->pan(-panDelta);
+	player->pan(panDelta);
 }
 
 void Render() {
@@ -369,6 +369,24 @@ void SizeCallback(GLFWwindow* window, int width, int height)
     Render();
 }
 
+void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    switch(action)
+    {
+    case GLFW_PRESS:
+	    switch (button)
+	    {
+		case GLFW_MOUSE_BUTTON_LEFT:
+            player->launchPortal1();
+            break;
+        case GLFW_MOUSE_BUTTON_RIGHT:
+            player->launchPortal2();
+            break;
+	    }
+        break;
+    }
+}
+
 int main(void)
 {
     if (!glfwInit()) {
@@ -405,6 +423,7 @@ int main(void)
 
     glfwSetKeyCallback(window, KeyCallback);
     glfwSetFramebufferSizeCallback(window, SizeCallback);
+    glfwSetMouseButtonCallback(window, MouseButtonCallback);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

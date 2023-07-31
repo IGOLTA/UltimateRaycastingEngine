@@ -1,7 +1,10 @@
 #pragma once
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <ext.hpp>
 #include <glm.hpp>
 
+#include "Utility.h"
 #include "map/Map.h"
 
 extern std::ostream* LogStream;
@@ -14,19 +17,15 @@ private:
 	const float panSpeed = 0.002f;
 	const float runSpeed = 14;
 	const float size = 0.5f;
+	const int colisionRays = 8;
 
 	glm::vec2 position = glm::vec2(0, 0);
 	glm::vec2 direction = glm::vec2(1, 0);
-	glm::vec2 plane = glm::vec2(0.0f, 0.8f);
+	glm::vec2 plane = glm::vec2(0, 0.8f);
 
 	bool running = 0;
 	
 	Map* map;
-
-	static glm::vec2 complexProduct(glm::vec2 a, glm::vec2 b);
-	static glm::vec2 rotateVector(glm::vec2 vec, float angle);
-	static int signe(float nb);
-
 public:
 	Player(Map* map);
 	
@@ -38,6 +37,9 @@ public:
 	
 	void pan(float amount);
 	void move(glm::vec2 moveDirection, float deltaTime);
+
+	void launchPortal1() const;
+	void launchPortal2() const;
 
 	RayHit rayCast(float rayAngle); //Pas vraiment un angle, juste une valeur pour multiplier avec plane
 	void ceilingScan(int scanLines, float speedFactor, float* scanCoords) const;

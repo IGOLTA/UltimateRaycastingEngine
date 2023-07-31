@@ -44,4 +44,6 @@ void main()
 	FragColor.x = FragColor.x * ambiant.x;
 	FragColor.y = FragColor.y * ambiant.y;
 	FragColor.z = FragColor.z * ambiant.z;
+
+	FragColor.w = 0;
 }

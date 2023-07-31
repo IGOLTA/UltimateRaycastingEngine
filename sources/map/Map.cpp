@@ -25,6 +25,26 @@ void Map::setTileIdAt(glm::ivec2 pos, unsigned int tile) {
 	this->tiles[pos.x * size.y + pos.y] = tile;
 }
 
+Portal Map::getPortal1() const
+{
+	return portal1;
+}
+
+void Map::setPortal1(Portal portal1)
+{
+	this->portal1 = portal1;
+}
+
+Portal Map::getPortal2() const
+{
+	return portal2;
+}
+
+void Map::setPortal2(Portal portal2)
+{
+	this->portal2 = portal2;
+}
+
 bool Map::inMap(glm::ivec2 pos) const {
 	if (pos.x < 0 || pos.y < 0) {
 		return false;
@@ -54,7 +74,9 @@ std::string Map::getMapString() const {
 	return mapstring;
 }
 
-RayHit Map::rayCast(glm::vec2 position, glm::vec2 rayDirection) const{
+RayHit Map::rayCast(glm::vec2 position, glm::vec2 rayDirection, int recursion, bool hitPortal) const{
+    rayDirection = glm::normalize(rayDirection);
+
     RayHit outHit;
     //which box of the map we're in
     auto mapPos = glm::ivec2(int(position.x), int(position.y));
@@ -115,7 +137,8 @@ RayHit Map::rayCast(glm::vec2 position, glm::vec2 rayDirection) const{
         if (!this->inMap(mapPos)) {
             hit = 1;
             outHit.tileId = 0;
-        } else if (this->getTileIdAt(mapPos) != 0) {
+        }
+        else if (this->getTileIdAt(mapPos) != 0) {
             outHit.tileId = this->getTileIdAt(mapPos);
             hit = 1;
         }
@@ -131,20 +154,73 @@ RayHit Map::rayCast(glm::vec2 position, glm::vec2 rayDirection) const{
     //Wich side was hit
     if (side == 0) {
         if (step.x == 1) {
-            outHit.side = HitSide::XN;
+            outHit.side = Side::XN;
         }
         else {
-            outHit.side = HitSide::XP;
+            outHit.side = Side::XP;
         }
     }
     else {
         if (step.y == 1) {
-            outHit.side = HitSide::YN;
+            outHit.side = Side::YN;
         }
         else {
-            outHit.side = HitSide::YP;
+            outHit.side = Side::YP;
         }
     }
 
+    //Portal detection
+    if(recursion < RECURSION_LEVEL)
+    {
+        if (portal1.side == outHit.side && glm::distance(portal1.pos, outHit.position) < PORTAL_RADIUS)
+        {
+            if (hitPortal)
+                outHit.portalHit = 1;
+            else
+	            portalCast(
+	                outHit,
+	                rayDirection,
+	                recursion,
+	                portal1,
+	                portal2
+	            );
+        } else if (portal2.side == outHit.side && glm::distance(portal2.pos, outHit.position) < PORTAL_RADIUS)
+        {
+            if (hitPortal)
+                outHit.portalHit = 2;
+            else
+	            portalCast(
+	                outHit,
+	                rayDirection,
+	                recursion,
+	                portal2,
+	                portal1
+	            );
+        }
+
+    }
+
+
     return outHit;
+}
+
+void Map::portalCast(RayHit &potralHit, glm::vec2 originalDirection, int recursion, Portal hitPortal, Portal otherPortal) const
+{
+    float rotationAngle = hitPortal == portal1 ? getPortal2AngleFrom1() : -getPortal2AngleFrom1();
+
+    glm::vec2 newDir = -Utility::rotateVector(originalDirection, rotationAngle);
+    glm::vec2 newPosition = otherPortal.pos + (potralHit.position - hitPortal.pos);
+
+    RayHit newHit = rayCast(newPosition, newDir, recursion + 1);
+
+    potralHit.side = newHit.side;
+    potralHit.position = newHit.position;
+    potralHit.distance += newHit.distance;
+    potralHit.tileId = newHit.tileId;
+}
+
+float Map::getPortal2AngleFrom1() const
+{
+    Side portalOrientationDelta = static_cast<Side>((portal2.side - portal1.side) % 4);
+    return portalOrientationDelta * (Utility::PI / 2);
 }

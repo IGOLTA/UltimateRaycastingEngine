@@ -1,8 +1,8 @@
 ﻿#version 410 core
 
 #define XP 0
-#define XN 1
-#define YP 2
+#define YP 1
+#define XN 2
 #define YN 3
 
 in vec2 RenderCoord;
@@ -33,7 +33,7 @@ void main()
 
     //Texture coords
     float offset = 0;
-    if (side <= 1) offset = position.y;
+    if (side == XP || side == XN) offset = position.y;
     else offset = position.x;
 
     vec2 TexCoord = vec2(
